@@ -12,11 +12,43 @@
             --text-main: #ffffff;
             --text-sub: #a0a0a0;
             --accent: #FFD700;
-            --blood: #b30000; /* 영원한 얼룩의 색 */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; /* Hide Default Cursor */ }
         
+        /* Custom Cursor */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        
+        /* Hide Custom Cursor on Touch Devices */
+        @media (hover: none) and (pointer: coarse) {
+            #custom-cursor {
+                display: none !important;
+            }
+            * {
+                cursor: auto !important; /* Restore default cursor */
+            }
+        }
+        
+        /* Cursor React */
+        body:active #custom-cursor {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+        }
+
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--bg-color);
@@ -25,56 +57,275 @@
             scroll-behavior: smooth;
         }
 
-        /* --- 붉은 얼룩의 법칙 (Visited Link) --- */
-        a { color: inherit; text-decoration: none; transition: color 0.5s ease; }
-        a:visited { color: var(--blood) !important; } /* 한 번 본 것은 피가 된다 */
-
-        #custom-cursor {
-            position: fixed; top: 0; left: 0; width: 30px; height: 30px;
-            background: var(--accent); border-radius: 50%; pointer-events: none;
-            z-index: 9999; transform: translate(-50%, -50%);
-            mix-blend-mode: difference; transition: width 0.2s, height 0.2s;
-        }
-
+        /* Scroll Glitch Overlay */
         #glitch-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: transparent; pointer-events: none; z-index: 9998;
-            opacity: 0; transition: opacity 0.1s;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.1s;
         }
 
-        /* Viral/Crazy Mode */
-        body.viral-active { background-image: url('https://media.giphy.com/media/26BRy67XWjV73Z6lW/giphy.gif'); background-blend-mode: hard-light; }
-        body.viral-active #custom-cursor { border-radius: 0; width: 50px; height: 10px; background: red; mix-blend-mode: normal; }
-
-        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 150px 40px; }
+        /* Viral Mode Styles */
+        body.viral-active {
+            background-image: url('https://media.giphy.com/media/26BRy67XWjV73Z6lW/giphy.gif') !important; /* Static TV Noise GIF */
+            background-size: cover;
+            background-blend-mode: hard-light;
+        }
         
+        body.viral-active section, 
+        body.viral-active nav,
+        body.viral-active #contact {
+            background: transparent !important; /* Make sections transparent so noise shows */
+        }
+
+        body.viral-active #custom-cursor {
+            border-radius: 0; 
+            width: 50px; 
+            height: 20px;
+            background: red;
+            mix-blend-mode: normal;
+            transition: none; /* Instant reaction */
+        }
+        
+        /* VHS Glitch Filter Overlay */
+        #glitch-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Mobile Optimization for Mode Switch */
+        @media (max-width: 768px) {
+            #mode-switch {
+                top: 10px; right: 10px; transform: scale(0.7);
+            }
+            .nav-links {
+                display: none; /* Keep it minimal on mobile initially */
+            }
+            section {
+                padding: 60px 20px !important;
+            }
+        }
+
+        @keyframes noise {
+            0% { transform: translate(0,0) }
+            10% { transform: translate(-5px,-5px) }
+            20% { transform: translate(-10px,5px) }
+            30% { transform: translate(5px,-10px) }
+            40% { transform: translate(-5px,15px) }
+            50% { transform: translate(-10px,5px) }
+            60% { transform: translate(15px,0) }
+            70% { transform: translate(0,10px) }
+            80% { transform: translate(-15px,0) }
+            90% { transform: translate(10px,5px) }
+            100% { transform: translate(5px,0) }
+        }
+
+        /* Breathing Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .grid-item {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Staggered Delay for Organic Feel */
+        .grid-item:nth-child(2n) { animation-delay: 1s; }
+        .grid-item:nth-child(3n) { animation-delay: 2s; }
+        .grid-item:nth-child(5n) { animation-delay: 3s; }
+
+
+        /* Smooth Scroll Logic (Native CSS) */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Full Height Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 150px 40px; /* Increased padding again for spacious look without snap constraints */
+        }
+
+        /* VHS Glitch Effect for SARAHKAYACOMSON */
         .vhs-text {
-            font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; color: var(--head-color);
-            text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; animation: glitch 3s infinite alternate-reverse;
+            font-size: clamp(3rem, 8vw, 6rem); /* Responsive Font Size */
+            font-weight: 900;
+            color: var(--head-color);
+            position: relative;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
+            animation: glitch 3s infinite linear alternate-reverse;
+            text-align: center;
+            line-height: 1.1;
         }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            100% { transform: translate(0); }
+            0% { text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; transform: translate(0); }
+            5% { text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; transform: translate(-2px, 2px); }
+            10% { transform: translate(2px, -2px); }
+            15% { text-shadow: 5px 0 #ff00c1, -5px 0 #00fff9; }
+            100% { text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; transform: translate(0); }
         }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 80%; max-width: 1200px; }
-        .grid-item { opacity: 0; transform: translateY(50px); transition: all 1s ease-out; animation: float 6s ease-in-out infinite; }
-        .grid-item.visible { opacity: 1; transform: translateY(0); }
-        
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* Random Lyrics/Quotes */
+        .random-quote {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: var(--text-sub);
+            font-weight: 300;
+            font-style: italic;
+            height: 1.5em;
+            text-align: center;
+            opacity: 0.8;
+        }
 
-        nav { position: fixed; top: 0; width: 100%; padding: 30px 50px; display: flex; justify-content: space-between; z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
-        .nav-links a { color: var(--text-sub); margin-left: 30px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        /* Responsive Grid Logic */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Auto Responsive */
+            gap: 20px;
+            width: 80%;
+            max-width: 1200px;
+        }
 
-        .social-btn { display: inline-flex; align-items: center; justify-content: center; padding: 0 20px; height: 35px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.75rem; font-weight: 800; }
-        .social-btn:hover { background: var(--accent); color: #000; }
+        .grid-item {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+        }
 
-        /* --- 0.01m 미궁 입구 (The Trap) --- */
-        .labyrinth-trigger {
-            width: 1px; height: 1px; display: inline-block; background: transparent;
-            position: absolute; bottom: 10%; right: 5%; cursor: default;
+        .grid-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid-item img {
+            width: 100%;
+            filter: grayscale(0.5) contrast(1.2);
+            transition: filter 0.5s;
+        }
+
+        .grid-item:hover img {
+            filter: grayscale(0) contrast(1);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .nav-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            section {
+                padding: 120px 20px; 
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            nav {
+                padding: 15px 20px;
+                background: rgba(0,0,0,0.9);
+                flex-direction: row; /* Keep SKC and links horizontal */
+                align-items: center;
+                gap: 15px;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-wrap: nowrap; /* Prevent breaking to new line */
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.75rem; /* Slightly smaller for mobile */
+            }
+
+            #mode-switch {
+                top: 75px !important; /* Move below the nav bar on mobile */
+                right: 15px !important;
+            }
+
+            .vhs-text {
+                font-size: 2.5rem; /* Reduced font size for mobile */
+            }
+            
+            #hero p {
+                font-size: 0.9rem !important; /* Smaller catchphrase */
+                letter-spacing: 0.15em !important;
+            }
+
+            h2 {
+                font-size: 1.8rem !important; /* Smaller section titles */
+            }
+            
+            .grid-container {
+                width: 100%;
+                gap: 20px;
+                grid-template-columns: repeat(2, 1fr) !important; 
+            }
+        }
+    
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px; width: auto; padding: 0 20px;
+            height: 35px;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+            margin-right: 15px;
+        }
+        .social-btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -82,10 +333,11 @@
     <div id="custom-cursor"></div>
     <div id="glitch-overlay"></div>
 
-    <div id="mode-switch" onclick="toggleViralMode()" style="position: fixed; top: 60px; right: 20px; z-index: 9999; cursor: pointer;">
-        <div style="background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 6px 12px; border-radius: 30px; display: flex; align-items: center; gap: 8px;">
-            <div id="indicator" style="width: 8px; height: 8px; background: #00ff00; border-radius: 50%;"></div>
-            <span id="mode-text" style="color: #fff; font-size: 0.65rem; font-weight: 700;">PRO MODE</span>
+    <!-- Mode Switch (Red/Blue Pill) -->
+    <div id="mode-switch" onclick="toggleViralMode()" style="position: fixed; top: 60px; right: 20px; z-index: 9999; cursor: pointer; transition: transform 0.3s;">
+        <div style="background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 6px 12px; border-radius: 30px; display: flex; align-items: center; gap: 8px; transform: scale(0.85); transform-origin: top right;">
+            <div id="indicator" style="width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00;"></div>
+            <span id="mode-text" style="color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;">PRO MODE</span>
         </div>
     </div>
 
@@ -95,97 +347,469 @@
             <a href="#about">About</a>
             <a href="#music">Music</a>
             <a href="#work">Video</a>
+            <a href="#craft">Craft</a>
             <a href="#contact">Contact</a>
         </div>
     </nav>
 
-    <section id="hero" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://image.melon.co.kr/cm2/album/images/114/38/888/11438888_20240312104523_500.jpg'); background-size: cover;">
-        <div style="text-align: center;">
+    <section id="hero" style="background-image: url('https://image.melon.co.kr/cm2/album/images/114/38/888/11438888_20240312104523_500.jpg'); background-size: cover; background-position: center;">
+        <!-- Dark Overlay for Readability -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);"></div>
+        
+        <div style="position: relative; z-index: 2; text-align: center;">
             <h1 class="vhs-text">SarahKayaComson</h1>
-            <p style="color: var(--accent); margin-top: 20px; letter-spacing: 0.3em;">형상을 빚어내고, 소리를 만집니다.</p>
-            <div id="quote-display" style="margin-top: 40px; font-style: italic; color: var(--text-sub);"></div>
-            <div style="margin-top: 50px; display: flex; justify-content: center; gap: 20px;">
-                <a href="https://instagram.com/sarahkayacomson" target="_blank" class="social-btn">Instagram</a>
-                <a href="https://youtube.com/@SarahKayaComson" target="_blank" class="social-btn">YouTube</a>
-            </div>
+            <p style="color: var(--accent); font-size: clamp(1rem, 2.5vw, 1.2rem); margin-top: 20px; letter-spacing: 0.3em; font-weight: 500; opacity: 0.9;">형상을 빚어내고, 소리를 만집니다.</p>
+            <div id="quote-display" class="random-quote" style="margin-top: 40px;"></div>
+            
+            <!-- Social Links (SoundCloud Added) -->
+            <div style="margin-top: 50px; display: flex; justify-content: center; gap: 30px;"><div style='margin-top:50px;display:flex;justify-content:center;gap:40px;'><a href='https://soundcloud.com/sarahkayacomson' target='_blank' class='social-btn'>SoundCloud</a><a href='https://instagram.com/sarahkayacomson' target='_blank' class='social-btn'>Instagram</a><a href='https://youtube.com/@SarahKayaComson' target='_blank' class='social-btn'>YouTube</a></div></div></div></div></div></div>
         </div>
     </section>
 
     <section id="about" style="background: #0a0a0a;">
-        <div style="max-width: 800px; text-align: center;">
-            <h2 style="color: var(--accent); margin-bottom: 40px; letter-spacing: 0.15em;">ABOUT</h2>
-            <p style="word-break: keep-all; line-height: 2; margin-bottom: 25px;">
-                "모호하고 근본 없지만 따뜻하고 편안한 음악"을 지향하는 사라카야콤슨은 힙합/R&B 기반의 레코딩 아티스트이다.
-            </p>
-            <a href="/labyrinth" class="labyrinth-trigger"></a>
+        <div style="max-width: 800px; text-align: center; line-height: 2;">
+            <h2 style="color: var(--accent); font-size: 2rem; margin-bottom: 40px; letter-spacing: 0.15em; font-weight: 800;">ABOUT</h2>
+            <div style="font-size: 1.15rem; color: var(--text-main); font-weight: 400; margin-bottom: 40px; word-break: keep-all;">
+                <p style="margin-bottom: 25px;">
+                    "모호하고 근본 없지만 따뜻하고 편안한 음악"을 지향하는 사라카야콤슨은 힙합/R&B 기반의 레코딩 아티스트이다. 2016년 싱글 [공전하네 feat.염따]로 데뷔한 뒤 샛노란 인형(puppet)을 페르소나로 내세워 펠트처럼 부드럽고 아이처럼 유쾌한 음악을 꾸준히 만들고 있다.
+                </p>
+                <p style="margin-bottom: 25px;">
+                    사라카야콤슨은 2018년 발매된 [From All To Human Remix] 프로젝트를 기점으로 사랑에 대한 노래를 꾸준히 만들어 나가기 시작했다. 이후 EP [The Therapy](2019)를 비롯한 다수의 EP와 싱글로 자기애(愛)에서 시작된 사랑의 범위를 조금씩 세상을 향해 넓혀가고 있다.
+                </p>
+                <p>
+                    자라섬 재즈 페스티벌, 포크라노스 페스티벌 등을 통해 좀 더 많은 사람에게 자신을 알리고 있는 사라카야콤슨은 사랑이 없는 지금의 시대에 사랑을 ‘보급’하기 위해 노력한다. 허무하게 흐르는 지금, 이 순간에도 사라카야콤슨은 자신만의 사랑이 묻어나는 인형과 영상, 음악을 만들며 천천히, 똑바로, 앞으로 나아가고 있습니다.
+                </p>
+            </div>
+            <div style="margin-top: 50px; display: flex; justify-content: center; gap: 20px;">
+                <div style="color: var(--accent); font-size: 0.85rem; letter-spacing: 0.2em; font-weight: 600; border-bottom: 1px solid var(--accent); padding-bottom: 5px;">RECORDING ARTIST</div>
+                <div style="color: var(--accent); font-size: 0.85rem; letter-spacing: 0.2em; font-weight: 600; border-bottom: 1px solid var(--accent); padding-bottom: 5px;">CRAFT ARTIST</div>
+                <div style="color: var(--accent); font-size: 0.85rem; letter-spacing: 0.2em; font-weight: 600; border-bottom: 1px solid var(--accent); padding-bottom: 5px;">PUPPETEER</div>
+            </div>
         </div>
     </section>
 
     <section id="music">
-        <h2 style="color: var(--accent); margin-bottom: 60px;">DISCOGRAPHY</h2>
+        <h2 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 60px; letter-spacing: 0.2em;">DISCOGRAPHY</h2>
+        
         <div style="width: 100%; max-width: 1200px;">
-            <h3 style="border-left: 3px solid var(--accent); padding-left: 15px; margin-bottom: 30px;">PARTICIPATIONS / FEATURES</h3>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; font-size: 0.85rem; color: var(--text-sub);">
-                <div>하곤 - ing ing (feat. 사라카야콤슨)</div>
-                <div>SunO - Current (제작)</div>
-                <div style="border-bottom: 1px solid #111;"><a href="#stain">사유나 - 얼룩 (feat. 사라카야콤슨)</a></div>
+            <!-- Solo Discography -->
+            <div style="margin-bottom: 80px;">
+                <h3 style="color: var(--text-main); font-size: 1rem; margin-bottom: 30px; border-left: 3px solid var(--accent); padding-left: 15px; letter-spacing: 0.1em;">SOLO WORKS</h3>
+                <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
+                    <div class="grid-item"><img src="assets/images/covers/photosynthesis.jpg" alt="광합성"><p style="font-size: 0.8rem; margin-top:10px;">광합성 (2024)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/family.jpg" alt="가족"><p style="font-size: 0.8rem; margin-top:10px;">가족 (2021)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/crumbs.jpg" alt="Crumbs of..."><p style="font-size: 0.8rem; margin-top:10px;">Crumbs of... (2021)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/canto_de_amor.jpg" alt="Canto De Amor"><p style="font-size: 0.8rem; margin-top:10px;">Canto De Amor (2021)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/the_therapy.jpg" alt="The Therapy"><p style="font-size: 0.8rem; margin-top:10px;">The Therapy (2019)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/fath_remix.jpg" alt="F.A.T.H Remix"><p style="font-size: 0.8rem; margin-top:10px;">F.A.T.H Remix (2018)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/byuv.jpg" alt="BYUV"><p style="font-size: 0.8rem; margin-top:10px;">BYUV (2017)</p></div>
+                </div>
+            </div>
+
+            <!-- Team Discography -->
+            <div style="margin-bottom: 80px;">
+                <h3 style="color: var(--text-main); font-size: 1rem; margin-bottom: 30px; border-left: 3px solid var(--accent); padding-left: 15px; letter-spacing: 0.1em;">TEAM: HAHOMECOM</h3>
+                <div class="grid-container" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
+                    <div class="grid-item"><img src="assets/images/covers/asiangame.jpg" alt="아시안게임"><p style="font-size: 0.8rem; margin-top:10px;">아시안게임 (2022)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/jurassic-girl.jpg" alt="Jurassic Girl"><p style="font-size: 0.8rem; margin-top:10px;">Jurassic Girl (2021)</p></div>
+                    <div class="grid-item"><img src="assets/images/covers/sunsetparade.jpg" alt="연패행진"><p style="font-size: 0.8rem; margin-top:10px;">연패행진 (2020)</p></div>
+                </div>
+            </div>
+            <!-- Features -->
+            <div>
+                <h3 style="color: var(--text-main); font-size: 1rem; margin-bottom: 30px; border-left: 3px solid var(--accent); padding-left: 15px; letter-spacing: 0.1em;">PARTICIPATIONS / FEATURES</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; font-size: 0.85rem; color: var(--text-sub);">
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">하곤 - ing ing (feat. 사라카야콤슨)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">홈홈 - 너의 가족 (제작)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">SunO - Current (제작)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">프롬올투휴먼 - Paradise (Bonita feat. 한요한)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">프롬올투휴먼 - LIEF (Gateball feat. 사라카야콤슨)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">웨이브온 커피 - Run (feat. 사라카야콤슨)</div>
+                    <div style="border-bottom: 1px solid #111; padding-bottom: 10px;">사유나 - 얼룩 (feat. 사라카야콤슨)</div>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="work" style="background: #050505;">
-        <h2 style="color: var(--accent); margin-bottom: 60px;">VIDEO WORKS</h2>
-        <div class="grid-container">
+        <h2 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 60px; letter-spacing: 0.2em;">VIDEO WORKS</h2>
+        <div style="width: 85%; max-width: 1200px; display: flex; flex-direction: column; gap: 80px;">
+            
+            <div class="grid-item">
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://www.youtube.com/embed/skgi7Y6bE1w" allowfullscreen></iframe>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2019</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">사라카야콤슨(SarahKayaComson) - El Macho</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">제작, 미술, 퍼페티어</p>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://www.youtube.com/embed/NQdtbuyeHfA" allowfullscreen></iframe>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2020</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">45RPM - 날아갈거야</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">감독, 제작, 미술, 퍼페티어</p>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://www.youtube.com/embed/mBH-P6Z_scw" allowfullscreen></iframe>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2022</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">하홈콤(HaHomeCom) - 순간을 위해</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">제작, 출연</p>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://www.youtube.com/embed/7ZcJH33Rksg" allowfullscreen></iframe>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2023</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">다비치 - 지극히 사적인 얘기</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">퍼페티어, 미술</p>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <div style="width:100%; position:relative; padding-bottom:56.25%; background:#111; display:flex; align-items:center; justify-content:center;">
+                    <img src="https://i.ytimg.com/vi/9u_jKlyEJx0/maxresdefault.jpg" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0.8;">
+                    <div style="position:absolute; bottom:20px; right:20px;">
+                        <a href="https://www.youtube.com/watch?v=9u_jKlyEJx0" target="_blank" style="background:var(--accent); color:#000; padding:10px 20px; text-decoration:none; font-size:0.8rem; font-weight:700;">WATCH ON YOUTUBE</a>
+                    </div>
+                </div>
+                <div style="margin-top:20px;">
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2025</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">Balming Tiger - Spirit Chaebol</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">미술, 퍼페티어, 탈인형 제작</p>
+                </div>
+            </div>
+            
             <div class="grid-item">
                 <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
                     <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://www.youtube.com/embed/GflONKrygVE" allowfullscreen></iframe>
                 </div>
                 <div style="margin-top:20px;">
-                    <span style="color:var(--accent); font-size: 0.75rem;">MUSIC VIDEO / 2026</span>
-                    <p style="font-weight: 600; margin-top:5px;">오희정 - 숲, 뿔 (2026 live)</p>
-                    <p style="color:var(--text-sub); font-size: 0.85rem;">제작, 감독, 퍼펫티어, 미술, 편집</p>
+                    <span style="color:var(--accent); font-size: 0.75rem; letter-spacing:0.1em;">MUSIC VIDEO / 2026</span>
+                    <p style="color:var(--text-main); font-size: 1.1rem; font-weight: 600; margin-top:5px;">오희정 - 숲, 뿔 (2026 live)</p>
+                    <p style="color:var(--text-sub); font-size: 0.85rem; margin-top:5px;">제작, 감독, 퍼펫티어, 미술, 편집</p>
                 </div>
             </div>
+
         </div>
     </section>
 
-    <section id="contact" style="background: #0a0a0a; border-top: 1px solid #222; text-align: center;">
-        <h2 style="color: var(--accent); margin-bottom: 40px;">CONTACT</h2>
-        <p>E-MAIL: bemyonez@gmail.com</p>
-        <div style="margin-top: 60px; font-size: 0.7rem; color: #555;">&copy; 2026 SARAHKAYACOMSON.</div>
+    <!-- CRAFT WORKS SECTION -->
+    <section id="craft" style="background: #000;">
+        <h2 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 60px; letter-spacing: 0.2em;">CRAFT WORKS</h2>
+        <div class="grid-container" style="grid-template-columns: repeat(2, 1fr); gap: 20px; width: 85%; max-width: 1200px;">
+            
+            <!-- 들숨, 날숨 -->
+            <div class="grid-item">
+                <div style="aspect-ratio: 4/3; overflow: hidden; position: relative;">
+                    <img src="assets/images/craft_inhale_exhale.jpg" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2) contrast(1.1); transition: transform 0.5s;">
+                </div>
+                <div style="margin-top: 25px;">
+                    <span style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; display: block; margin-bottom: 5px;">INSTALLATION / 2022</span>
+                    <h3 style="color: var(--text-main); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">들숨, 날숨 (Inhale, Exhale)</h3>
+                    <p style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6;">
+                        '숨쉬는 돌' 컨셉의 작품. 돌 모양의 오브제에 손을 얹으면 진동과 함께 숨소리가 들려온다.<br>
+                        나를 사랑하는 시간을 가져볼 수 있었으면 하는 마음으로 제작되었다.
+                    </p>
+                    <a href="https://m.blog.naver.com/wiz_js/222917110888" target="_blank" style="display: inline-block; margin-top: 15px; color: var(--text-main); font-size: 0.8rem; text-decoration: underline; opacity: 0.7;">View Details &rarr;</a>
+                </div>
+            </div>
+
+            <!-- 콜렉션; 코로나 시대의 우리들 -->
+            <div class="grid-item">
+                <div style="aspect-ratio: 4/3; overflow: hidden; position: relative;">
+                    <img src="assets/images/craft_collection.jpg" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2) contrast(1.1); transition: transform 0.5s;">
+                </div>
+                <div style="margin-top: 25px;">
+                    <span style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; display: block; margin-bottom: 5px;">ARCHIVING / 2021</span>
+                    <h3 style="color: var(--text-main); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">콜렉션; 코로나 시대의 우리들</h3>
+                    <p style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6;">
+                        코로나 시대에 쓰였던 물건들을 진공포장해 기부자의 인터뷰와 함께 전시하는 아카이빙 프로젝트.<br>
+                        전시 기획, 리서치, 작품 제작, 촬영 및 편집 전 과정 수행.
+                    </p>
+                    <a href="https://youtu.be/0uindXEoXtY" target="_blank" style="display: inline-block; margin-top: 15px; color: var(--text-main); font-size: 0.8rem; text-decoration: underline; opacity: 0.7;">Watch Video &rarr;</a>
+                </div>
+            </div>
+
+             <!-- 소리, 움직임 -->
+             <div class="grid-item">
+                <div style="aspect-ratio: 4/3; overflow: hidden; position: relative;">
+                    <img src="assets/images/craft_sound_movement.jpg?v=final" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2) contrast(1.1); transition: transform 0.5s;">
+                </div>
+                <div style="margin-top: 25px;">
+                    <span style="color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; display: block; margin-bottom: 5px;">ART FILM / 2021</span>
+                    <h3 style="color: var(--text-main); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">소리, 움직임 (Sound, Movement)</h3>
+                    <p style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6;">
+                        코로나 시대의 소리와 움직임을 채집해서 음악과 무용을 만들어 제작한 아트필름.<br>
+                        기획, 리서치, 작품 제작, 감독, 촬영, 편집 수행.
+                    </p>
+                    <a href="https://artson.arko.or.kr/artson/artro/view?cid=5080&menuID=101" target="_blank" style="display: inline-block; margin-top: 15px; color: var(--text-main); font-size: 0.8rem; text-decoration: underline; opacity: 0.7;">View Project &rarr;</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="contact" style="background: #0a0a0a; border-top: 1px solid #222; text-align: center; padding: 100px 20px;">
+        <h2 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 40px; letter-spacing: 0.2em;">CONTACT</h2>
+        <div style="font-size: 1.1rem; color: var(--text-main); line-height: 2;">
+            <p>E-MAIL: <a href="mailto:bemyonez@gmail.com" style="color: #fff; text-decoration: underline;">bemyonez@gmail.com</a></p>
+            <p>INSTAGRAM: <a href="https://instagram.com/sarahkayacomson" target="_blank" style="color: #fff; text-decoration: underline;">@sarahkayacomson</a></p>
+        </div>
+        <div style="margin-top: 60px; font-size: 0.7rem; color: #555;">
+            &copy; 2026 SARAHKAYACOMSON. ALL RIGHTS RESERVED.
+        </div>
     </section>
 
     <script>
+        // Mode Switch Logic
+        let isViral = false;
+        let gravityInterval;
+        const elementsToFall = [];
+
+        function toggleViralMode() {
+            isViral = !isViral;
+            const body = document.body;
+            const indicator = document.getElementById('indicator');
+            const modeText = document.getElementById('mode-text');
+            const switchBtn = document.getElementById('mode-switch');
+
+            if (isViral) {
+                // Viral Mode ON
+                body.classList.add('viral-active');
+                indicator.style.background = '#ff0000';
+                indicator.style.boxShadow = '0 0 10px #ff0000';
+                modeText.innerText = 'CRAZY MODE';
+                modeText.style.color = '#ff0000';
+                switchBtn.style.transform = 'rotate(180deg)';
+                
+                // Trigger Gravity
+                initGravity();
+                
+            } else {
+                // Pro Mode ON (Reset)
+                body.classList.remove('viral-active');
+                indicator.style.background = '#00ff00';
+                indicator.style.boxShadow = '0 0 10px #00ff00';
+                modeText.innerText = 'PRO MODE';
+                modeText.style.color = '#fff';
+                switchBtn.style.transform = 'rotate(0deg)';
+                
+                // Reset Gravity
+                stopGravity();
+            }
+        }
+
+        // Simple Gravity Physics Engine
+        function initGravity() {
+            // Check if mobile (touch-only or small screen)
+            const isMobile = window.matchMedia("(max-width: 768px)").matches || 
+                           ('ontouchstart' in window) || 
+                           (navigator.maxTouchPoints > 0);
+            
+            // Limit target elements on mobile for performance
+            const selector = isMobile 
+                ? 'h1, h2, nav, #today-song-widget, .grid-item:nth-child(-n+4)' 
+                : '.grid-item, h1, h2, p, span, nav, iframe, #today-song-widget';
+            
+            const targets = document.querySelectorAll(selector);
+            
+            targets.forEach(el => {
+                if(el.id === 'mode-switch') return; 
+                if(el.closest('#player-modal')) return;
+
+                const rect = el.getBoundingClientRect();
+                
+                // 1. Stop CSS animations/transitions immediately
+                el.style.animation = 'none';
+                el.style.transition = 'none';
+                
+                // 2. Lock dimensions
+                el.style.width = rect.width + 'px';
+                el.style.height = rect.height + 'px';
+                
+                // 3. Set initial fixed position
+                el.style.position = 'fixed';
+                el.style.left = rect.left + 'px';
+                el.style.top = rect.top + 'px';
+                el.style.margin = '0';
+                el.style.zIndex = '1000'; 
+                
+                // 4. Move to <body>
+                document.body.appendChild(el);
+
+                elementsToFall.push({
+                    el: el,
+                    x: 0,
+                    y: 0,
+                    vx: (Math.random() - 0.5) * (isMobile ? 10 : 15), 
+                    vy: Math.random() * 5,
+                    rot: 0,
+                    vrot: (Math.random() - 0.5) * (isMobile ? 5 : 10),
+                    baseLeft: rect.left,
+                    baseTop: rect.top
+                });
+            });
+
+            // Adjust physics step based on device
+            const frameSkip = isMobile ? 2 : 1; 
+            let frameCount = 0;
+
+            function loop() {
+                if (!isViral) return;
+                frameCount++;
+                if (frameCount % frameSkip === 0) {
+                    updateGravity();
+                }
+                gravityInterval = requestAnimationFrame(loop);
+            }
+            
+            gravityInterval = requestAnimationFrame(loop);
+        }
+
+        function updateGravity() {
+            elementsToFall.forEach(obj => {
+                obj.vy += 0.8; // Gravity
+                obj.y += obj.vy;
+                obj.x += obj.vx;
+                obj.rot += obj.vrot;
+
+                const currentAbsY = obj.baseTop + obj.y;
+                const currentAbsX = obj.baseLeft + obj.x;
+                const elementHeight = parseFloat(obj.el.style.height) || 0;
+                const elementWidth = parseFloat(obj.el.style.width) || 0;
+
+                const floor = window.innerHeight; 
+                
+                if (currentAbsY + elementHeight >= floor) {
+                    obj.vy *= -0.5; // Slightly less bouncy on mobile/all
+                    obj.vx *= 0.9; 
+                    obj.y = floor - elementHeight - obj.baseTop; 
+                }
+                
+                if (currentAbsX <= 0 || currentAbsX + elementWidth >= window.innerWidth) {
+                    obj.vx *= -0.8;
+                }
+
+                obj.el.style.transform = `translate(${obj.x}px, ${obj.y}px) rotate(${obj.rot}deg)`;
+            });
+        }
+
+        function stopGravity() {
+            cancelAnimationFrame(gravityInterval);
+            elementsToFall.length = 0; // Clear array
+            
+            // Hard Reload to reset layout cleanly (simplest way to restore complex grid)
+            location.reload(); 
+        }
+
+        // Sound Effect Hook (Puppet Mouth)
+        document.addEventListener('mousedown', () => {
+            if (isViral) {
+                // Placeholder for "Ah!" sound
+                // new Audio('assets/audio/ah.mp3').play();
+                console.log("AH!"); 
+                
+                // Visual pop
+                const cursor = document.getElementById('custom-cursor');
+                cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                cursor.style.background = 'red';
+                setTimeout(() => {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursor.style.background = 'var(--accent)';
+                }, 100);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isViral) {
+                // Placeholder for "Oh!" sound
+                // new Audio('assets/audio/oh.mp3').play();
+                console.log("OH!");
+            }
+        });
+
+        // Random Quotes Logic
+        const quotes = [
+            "형상을 빚어내고, 소리를 만집니다.",
+            "사랑을 위하여, 사라카야콤슨",
+            "모호하고 근본 없지만 따뜻하고 편안한 음악",
+            "음악이 장난이야? 넵.",
+            "사랑이 없는 지금의 시대에 사랑을 보급하기 위해",
+            "천천히, 똑바로, 앞으로 나아가고 있습니다",
+            "For Love, SarahKayaComson",
+            "사랑의 범위를 조금씩 세상을 향해 넓혀가고 있습니다",
+            "숨쉬는 돌: 들숨, 날숨",
+            "코리안 팝을 표방하는 팀 하홈콤"
+        ];
+
+        function changeQuote() {
+            const display = document.getElementById('quote-display');
+            if (display) {
+                display.style.opacity = 0;
+                setTimeout(() => {
+                    display.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+                    display.style.opacity = 0.8;
+                }, 500);
+            }
+        }
+
+        setInterval(changeQuote, 4000);
+        changeQuote();
+
+        // Intersection Observer for Scroll Animations
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.grid-item').forEach(item => observer.observe(item));
+        // Scroll Glitch Logic
+        let lastScrollY = window.scrollY;
+        const glitchOverlay = document.getElementById('glitch-overlay');
+        
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const speed = Math.abs(currentScrollY - lastScrollY);
+            
+            if (speed > 50) { // Threshold for fast scroll
+                glitchOverlay.style.opacity = Math.min(speed / 200, 0.5); // Max opacity 0.5
+                glitchOverlay.classList.add('glitch-active');
+                
+                // Random chromatic aberration on body
+                document.body.style.textShadow = `${Math.random() * 10 - 5}px 0 rgba(255,0,0,0.5), ${Math.random() * 10 - 5}px 0 rgba(0,0,255,0.5)`;
+            } else {
+                glitchOverlay.style.opacity = 0;
+                glitchOverlay.classList.remove('glitch-active');
+                document.body.style.textShadow = 'none';
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+
+        // Custom Cursor Logic
         const cursor = document.getElementById('custom-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
-
-        let isViral = false;
-        function toggleViralMode() {
-            isViral = !isViral;
-            document.body.classList.toggle('viral-active', isViral);
-            document.getElementById('indicator').style.background = isViral ? '#ff0000' : '#00ff00';
-            document.getElementById('mode-text').innerText = isViral ? 'CRAZY MODE' : 'PRO MODE';
-            if (isViral) console.log("AH!"); else location.reload();
-        }
-
-        const quotes = ["형상을 빚어내고, 소리를 만집니다.", "사랑을 위하여.", "음악이 장난이야? 넵.", "사유나 - 얼룩"];
-        function changeQuote() {
-            const display = document.getElementById('quote-display');
-            display.style.opacity = 0;
-            setTimeout(() => {
-                display.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-                display.style.opacity = 0.8;
-            }, 500);
-        }
-        setInterval(changeQuote, 4000); changeQuote();
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.grid-item').forEach(item => observer.observe(item));
     </script>
-</body>
+<div id='back-to-top' onclick='window.scrollTo({top:0,behavior:"smooth"})' style='position:fixed;bottom:100px;right:30px;z-index:1000;width:50px;height:50px;background:rgba(0,0,0,0.8);border:1px solid #333;border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);font-size:1.5rem;'>↑</div><script>window.addEventListener('scroll',()=>{const b=document.getElementById('back-to-top');b.style.display=window.scrollY>300?'flex':'none';});</script></body>
 </html>
