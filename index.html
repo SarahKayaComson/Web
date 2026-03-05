@@ -614,59 +614,6 @@
         }
     </style>
 
-    <!-- Hidden Player Modal -->
-    <div id="player-modal" style="position: fixed; bottom: 100px; right: 30px; z-index: 999; display: none; width: 320px; background: #111; border: 1px solid #333; padding: 20px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
-        <p id="song-comment-text" style="color: var(--text-sub); font-size: 0.9rem; font-style: italic; margin-bottom: 20px; line-height: 1.6; border-left: 3px solid var(--accent); padding-left: 15px;"></p>
-        <iframe id="player-iframe" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src=""></iframe>
-        <div style="text-align: right; margin-top: 10px; font-size: 0.8rem; color: #555; cursor: pointer;" onclick="document.getElementById('player-modal').style.display='none'">CLOSE X</div>
-    </div>
-
-    <script>
-        // Today's Song Data Pool (랜덤 재생)
-        const songPool = [
-            {
-                title: "광합성 (Photosynthesis)",
-                cover: "assets/images/covers/photosynthesis.jpg",
-                // SoundCloud Embed URL (Example Track ID)
-                url: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1770273873&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
-                comment: "\"햇살 좋은 날, 식물처럼 가만히 앉아 듣기 좋은 곡입니다.\""
-            },
-            {
-                title: "가족 (Family)",
-                cover: "assets/images/covers/family.jpg",
-                url: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1099663954&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
-                comment: "\"사랑하는 사람들을 떠올리며 만든 따뜻한 노래입니다.\""
-            },
-            {
-                title: "The Therapy",
-                cover: "assets/images/covers/the_therapy.jpg",
-                url: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/663045992&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
-                comment: "\"지친 하루의 끝, 마음의 위로가 되어줄 테라피 같은 음악.\""
-            }
-        ];
-
-        // Random Select Logic
-        const todaySong = songPool[Math.floor(Math.random() * songPool.length)];
-        
-        // Update Widget
-        document.getElementById('widget-song-title').innerText = todaySong.title;
-        document.getElementById('spin-cover').src = todaySong.cover;
-        document.getElementById('song-comment-text').innerText = todaySong.comment;
-        document.getElementById('player-iframe').src = todaySong.url; // Preload but pause
-
-        function togglePlayer() {
-            const modal = document.getElementById('player-modal');
-            const spin = document.getElementById('album-spin');
-            
-            if (modal.style.display === 'none' || modal.style.display === '') {
-                modal.style.display = 'block';
-                spin.style.animationPlayState = 'running';
-            } else {
-                modal.style.display = 'none';
-                spin.style.animationPlayState = 'paused';
-            }
-        }
-
         // Mode Switch Logic
         let isViral = false;
         let gravityInterval;
